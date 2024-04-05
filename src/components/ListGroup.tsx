@@ -1,7 +1,8 @@
-import { MouseEvent } from "react";
+import { useState } from "react";
 
 type Items = string;
 export default function ListGroup() {
+ const [activeIndex, setActiveIndex] = useState<number>(-1)
 	const items: Items[] = [
 		"An item",
 		"A second item",
@@ -11,9 +12,13 @@ export default function ListGroup() {
 	];
 
 	// Event handler
-	const handelClick = (item:Items) => console.log(item);
+	const handelClick = (index: number) => setActiveIndex(index)
 	const ItemsLists = items.map((item, index) => (
-		<li key={item} onClick={()=> handelClick(item)} className="list-group-item">
+		<li
+			key={item}
+			onClick={() => handelClick(index)}
+			className={`${activeIndex === index && "list-group-item active"} list-group-item `}
+		>
 			{item}
 		</li>
 	));
