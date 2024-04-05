@@ -1,13 +1,19 @@
+import { MouseEvent } from "react";
+
+type Items = string;
 export default function ListGroup() {
-	const items = [
+	const items: Items[] = [
 		"An item",
 		"A second item",
 		"A third item",
 		"A fourth item",
 		"And a fifth one",
 	];
-	const ItemsLists = items.map((item) => (
-		<li key={item} className="list-group-item">
+
+	// Event handler
+	const handelClick = (item:Items) => console.log(item);
+	const ItemsLists = items.map((item, index) => (
+		<li key={item} onClick={()=> handelClick(item)} className="list-group-item">
 			{item}
 		</li>
 	));
