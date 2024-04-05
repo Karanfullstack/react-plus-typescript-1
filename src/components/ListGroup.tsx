@@ -15,7 +15,8 @@ export default function ListGroup() {
 	return (
 		<>
 			<h1>List</h1>
-			<ul className="list-group">{ItemsLists}</ul>
+			{ItemsLists && <ul className="list-group">{ItemsLists}</ul>}
+			{ItemsLists.length === 0 && <p>No items</p>}
 		</>
 	);
 }
