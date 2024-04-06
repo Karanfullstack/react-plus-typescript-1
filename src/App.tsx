@@ -8,9 +8,10 @@ function App() {
 		"A fourth item",
 		"And a fifth one",
 	];
+const onSelectItem	= (item: string) => console.log(item);
 	return (
 		<div className="App">
-			<ListGroup items={items} heading="Countries" />
+			<ListGroup items={items} heading="Countries" onSelectItem={onSelectItem} />
 		</div>
 	);
 }
