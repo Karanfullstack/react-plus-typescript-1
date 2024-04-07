@@ -1,19 +1,21 @@
 import { useState } from "react";
-import Navbar from "./components/Navbar";
+import ExpandableText from "./components/ExpandableText";
 
 function App() {
-	const [cartItems, setCartItems] = useState<string[]>([
-		"Apple",
-		"Java",
-		"Samsung",
-	]);
 	return (
 		<div>
-			<Navbar cartItems={cartItems} onClick={() => setCartItems([])} />
-
-			{cartItems.map((item) => (
-				<div key={item}>{item}</div>
-			))}
+			<ExpandableText maxLength={100}>
+				Lorem ipsum, dolor sit amet consectetur adipisicing elit. Harum quia
+				praesentium ex facere, distinctio ullam reiciendis neque vel est,
+				recusandae delectus? Eos, expedita quidem itaque doloribus quo vero iure
+				cum. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Harum
+				quia praesentium ex facere, distinctio ullam reiciendis neque vel est,
+				recusandae delectus? Eos, expedita quidem itaque doloribus quo vero iure
+				cum. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Harum
+				quia praesentium ex facere, distinctio ullam reiciendis neque vel est,
+				recusandae delectus? Eos, expedita quidem itaque doloribus quo vero iure
+				cum....
+			</ExpandableText>
 		</div>
 	);
 }
