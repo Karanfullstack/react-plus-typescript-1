@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ExpanseList from "./Expanse/components/ExpanseList";
 import ExpanseFilter from "./Expanse/components/ExpanseFilter";
+import ExpanseForm from "./Expanse/components/ExpanseForm";
 
 function App() {
 	const [selectedCategory, setSelectedCategory] = useState("");
@@ -14,9 +15,12 @@ function App() {
 	const data = selectedCategory
 		? expanses.filter((item) => item.category === selectedCategory)
 		: expanses;
-		
+
 	return (
 		<div>
+			<div className="mb-3">
+				<ExpanseForm />
+			</div>
 			<div className="mb-3">
 				<ExpanseFilter
 					onSelectCategory={(category) => setSelectedCategory(category)}
