@@ -1,34 +1,20 @@
 import { useState } from "react";
-import ExpanseForm from "./components/ExpanseForm/ExpanseForm";
-import Table from "./Table/Table";
+import ExpanseList from "./Expanse/components/ExpanseList";
 
-export interface DataProps {
-	readonly id: string;
-	description: string;
-	amount: number;
-	category: string;
-}
 function App() {
-	const [data, setData] = useState<DataProps[]>([]);
-
-	const addData = (data: DataProps) => {
-		const Data: DataProps = {
-			id: Date.now().toString(),
-			description: data.description,
-			amount: data.amount,
-			category: data.category,
-		};
-		setData((prev) => [...prev, Data]);
-	};
-
-	const onDelete = (id: string) => {
-		const newData = data.filter((item) => item.id !== id);
-		setData(newData);
-	};
+	const [expanses, setExpanses] = useState([
+		{ id: 1, description: "Car 1", amount: 294.67, category: "Insurance" },
+		{ id: 2, description: "Car 2", amount: 294.67, category: "Insurance" },
+		{ id: 3, description: "Car 3", amount: 294.67, category: "Insurance" },
+	]);
 	return (
 		<div>
-			<ExpanseForm addData={addData} />
-			<Table data={data} onDelete={onDelete} />
+			<ExpanseList
+				expanses={expanses}
+				onDelete={(id) =>
+					setExpanses(expanses.filter((item) => item.id !== id))
+				}
+			/>
 		</div>
 	);
 }
