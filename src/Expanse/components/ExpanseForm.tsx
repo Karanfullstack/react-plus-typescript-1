@@ -14,17 +14,26 @@ const schema = z.object({
 });
 
 type ExpanseFormData = z.infer<typeof schema>;
-
-export default function ExpanseForm() {
+interface Props {
+	onSubmit: (data: ExpanseFormData) => void;
+}
+export default function ExpanseForm({ onSubmit }: Props) {
 	const {
 		register,
 		handleSubmit,
+		reset,
 		formState: { errors, isValid },
 	} = useForm<ExpanseFormData>({
 		resolver: zodResolver(schema),
 	});
 	return (
-		<form onSubmit={handleSubmit((data) => console.log(data))} className="mb-3">
+		<form
+			onSubmit={handleSubmit((data) => {
+				onSubmit(data);
+				reset();
+			})}
+			className="mb-3"
+		>
 			<div className="mb-3">
 				<label htmlFor="description" className="form-label">
 					Description

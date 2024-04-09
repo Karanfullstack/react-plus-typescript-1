@@ -19,7 +19,11 @@ function App() {
 	return (
 		<div>
 			<div className="mb-3">
-				<ExpanseForm />
+				<ExpanseForm
+					onSubmit={(data) =>
+						setExpanses([...expanses, { ...data, id: expanses.length + 1 }])
+					}
+				/>
 			</div>
 			<div className="mb-3">
 				<ExpanseFilter
