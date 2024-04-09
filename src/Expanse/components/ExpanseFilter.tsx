@@ -1,4 +1,4 @@
-import { categoriesf } from "../categories";
+import { categories } from "../categories";
 interface ExpanseFilterProps {
 	onSelectCategory: (category: string) => void;
 }
