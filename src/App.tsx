@@ -1,41 +1,21 @@
 import { useState } from "react";
-import ExpanseList from "./Expanse/components/ExpanseList";
-import ExpanseFilter from "./Expanse/components/ExpanseFilter";
-import ExpanseForm from "./Expanse/components/ExpanseForm";
+import ProductLists from "./useEffect/ProductLists";
 
 function App() {
-	const [selectedCategory, setSelectedCategory] = useState("");
-
-	const [expanses, setExpanses] = useState([
-		{ id: 1, description: "Car 1", amount: 294.67, category: "Groceries" },
-		{ id: 2, description: "Car 2", amount: 294.67, category: "Groceries" },
-		{ id: 3, description: "Car 3", amount: 294.67, category: "Groceries" },
-	]);
-
-	const data = selectedCategory
-		? expanses.filter((item) => item.category === selectedCategory)
-		: expanses;
+	const [category, setCategory] = useState("");
 
 	return (
 		<div>
-			<div className="mb-3">
-				<ExpanseForm
-					onSubmit={(data) =>
-						setExpanses([...expanses, { ...data, id: expanses.length + 1 }])
-					}
-				/>
+			<div>
+				<select
+					className="form-select"
+					onChange={(e) => setCategory(e.target.value)}
+				>
+					<option value="apple">Apple</option>
+					<option value="mango">Mango</option>
+				</select>
 			</div>
-			<div className="mb-3">
-				<ExpanseFilter
-					onSelectCategory={(category) => setSelectedCategory(category)}
-				/>
-			</div>
-			<ExpanseList
-				expanses={data}
-				onDelete={(id) =>
-					setExpanses(expanses.filter((item) => item.id !== id))
-				}
-			/>
+			<ProductLists category={category} />
 		</div>
 	);
 }

@@ -1,9 +1,4 @@
-interface Expanses {
-	id: number;
-	description: string;
-	amount: number;
-	category: string;
-}
+import { type Expanses } from "../../App";
 
 interface ExpanseListProps {
 	expanses: Expanses[];
