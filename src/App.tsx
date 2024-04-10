@@ -1,6 +1,7 @@
 import axios, { AxiosError, CanceledError } from "axios";
 import { useEffect, useState } from "react";
 
+
 interface IUser {
 	id: number;
 	name: string;
@@ -38,9 +39,32 @@ function App() {
 				setUsers(originalUser);
 			});
 	};
+
+	const handleAdd = () => {
+		const originalUsers = [...users];
+		const newUser = {
+			id: 0,
+			name: "New User",
+		};
+		setUsers([...users, newUser]);
+		axios
+			.post("https://jsonplaceholder.typicode.com/xusers", newUser)
+			.then(({ data: savedUser }) => {
+				console.log(savedUser);
+				setUsers([...users, savedUser])
+
+			})
+			.catch((err) => {
+				setError(err.message);
+				setUsers(originalUsers);
+			});
+	};
 	return (
 		<div>
 			{error && <div className="text-danger">{error}</div>}
+			<button onClick={handleAdd} className="btn btn-primary">
+				Add User
+			</button>
 			<ul className="list-group">
 				{users.map((user) => (
 					<li
