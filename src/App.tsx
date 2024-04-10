@@ -28,12 +28,36 @@ function App() {
 		return () => controller.abort();
 	}, []);
 
+	const handleDelete = (user: IUser) => {
+		const originalUser = [...users];
+		setUsers(users.filter((u) => u.id !== user.id));
+		axios
+			.delete("https://jsonplaceholder.typicode.com/users/" + user.id)
+			.catch((err) => {
+				setError(err.message);
+				setUsers(originalUser);
+			});
+	};
 	return (
 		<div>
-			{users.map((user) => (
-				<li key={user.id}>{user.name}</li>
-			))}
 			{error && <div className="text-danger">{error}</div>}
+			<ul className="list-group">
+				{users.map((user) => (
+					<li
+						className="list-group-item d-flex justify-content-between"
+						key={user.id}
+					>
+						{user.name}
+						<button
+							onClick={() => handleDelete(user)}
+							className="btn btn-danger"
+						>
+							Delete
+						</button>
+					</li>
+				))}
+			</ul>
+
 			{loading && <div className="spinner-border"></div>}
 		</div>
 	);
