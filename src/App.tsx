@@ -1,10 +1,11 @@
-import axios, { AxiosError, CanceledError } from "axios";
 import { useEffect, useState } from "react";
+import apiClient,{CanceledError} from "./services/api-client";
 
 interface IUser {
 	id: number;
 	name: string;
 }
+
 function App() {
 	const [users, setUsers] = useState<IUser[]>([]);
 	const [error, setError] = useState<string | null>(null);
@@ -12,7 +13,7 @@ function App() {
 	useEffect(() => {
 		const controller = new AbortController();
 		setLoading(true);
-		axios
+		apiClient
 			.get<IUser[]>("https://jsonplaceholder.typicode.com/users", {
 				signal: controller.signal,
 			})
@@ -20,7 +21,7 @@ function App() {
 				setUsers(res.data);
 				setLoading(false);
 			})
-			.catch((err: AxiosError) => {
+			.catch((err) => {
 				if (err instanceof CanceledError) return;
 				setError(err.message);
 				setLoading(false);
@@ -31,7 +32,7 @@ function App() {
 	const handleDelete = (user: IUser) => {
 		const originalUser = [...users];
 		setUsers(users.filter((u) => u.id !== user.id));
-		axios
+		apiClient
 			.delete("https://jsonplaceholder.typicode.com/users/" + user.id)
 			.catch((err) => {
 				setError(err.message);
@@ -46,7 +47,7 @@ function App() {
 			name: "New User",
 		};
 		setUsers([...users, newUser]);
-		axios
+		apiClient
 			.post("https://jsonplaceholder.typicode.com/users", newUser)
 			.then(({ data: savedUser }) => {
 				console.log(savedUser);
@@ -59,17 +60,17 @@ function App() {
 	};
 
 	const handleUpdate = (user: IUser) => {
-		const originalUser = [...users]
-		const updatedUser = { ...user, name: user.name + "!" };
-		setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
-		axios.patch(
-			"https://jsonplaceholder.typicode.com/xusers/" + user.id,
-			updatedUser
-		).catch((err)=>{
-			 setError(err.message);
-				setUsers(originalUser)
-		});
+		const originalUsers = [...users];
+		const updatedUser = {...user, name: user.name + "!"};
+		setUsers(users.map((u)=> u.id === user.id ? updatedUser : u));
+		apiClient.patch("https://jsonplaceholder.typicode.com/users/" + user.id, updatedUser)
+		.catch((err)=>{
+			setError(err.message);
+			setUsers(originalUsers);
+		})
 	};
+
+
 	return (
 		<div>
 			{error && <div className="text-danger">{error}</div>}
