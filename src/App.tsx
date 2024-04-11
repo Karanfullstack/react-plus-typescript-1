@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
-import apiClient,{CanceledError} from "./services/api-client";
-
-interface IUser {
-	id: number;
-	name: string;
-}
+import { CanceledError } from "./services/api-client";
+import UserService, { type IUser } from "../src/services/apiService";
 
 function App() {
 	const [users, setUsers] = useState<IUser[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
+
 	useEffect(() => {
-		const controller = new AbortController();
 		setLoading(true);
-		apiClient
-			.get<IUser[]>("https://jsonplaceholder.typicode.com/users", {
-				signal: controller.signal,
-			})
+
+		const { request, cancel } = UserService.getAllUsers();
+		request
 			.then((res) => {
 				setUsers(res.data);
 				setLoading(false);
@@ -26,18 +21,16 @@ function App() {
 				setError(err.message);
 				setLoading(false);
 			});
-		return () => controller.abort();
+		return () => cancel();
 	}, []);
 
 	const handleDelete = (user: IUser) => {
 		const originalUser = [...users];
 		setUsers(users.filter((u) => u.id !== user.id));
-		apiClient
-			.delete("https://jsonplaceholder.typicode.com/users/" + user.id)
-			.catch((err) => {
-				setError(err.message);
-				setUsers(originalUser);
-			});
+		UserService.deleteUser(user.id).catch((err) => {
+			setError(err.message);
+			setUsers(originalUser);
+		});
 	};
 
 	const handleAdd = () => {
@@ -47,8 +40,7 @@ function App() {
 			name: "New User",
 		};
 		setUsers([...users, newUser]);
-		apiClient
-			.post("https://jsonplaceholder.typicode.com/users", newUser)
+		UserService.createUser(newUser)
 			.then(({ data: savedUser }) => {
 				console.log(savedUser);
 				setUsers([...users, savedUser]);
@@ -61,15 +53,13 @@ function App() {
 
 	const handleUpdate = (user: IUser) => {
 		const originalUsers = [...users];
-		const updatedUser = {...user, name: user.name + "!"};
-		setUsers(users.map((u)=> u.id === user.id ? updatedUser : u));
-		apiClient.patch("https://jsonplaceholder.typicode.com/users/" + user.id, updatedUser)
-		.catch((err)=>{
+		const updatedUser = { ...user, name: user.name + "!" };
+		setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
+		UserService.updateUser(updatedUser).catch((err) => {
 			setError(err.message);
 			setUsers(originalUsers);
-		})
+		});
 	};
-
 
 	return (
 		<div>
