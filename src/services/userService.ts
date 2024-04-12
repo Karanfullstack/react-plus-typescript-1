@@ -4,4 +4,4 @@ export interface IUser {
 	name: string;
 }
 
-export default createService("/users");
+export default createService("/users/");
