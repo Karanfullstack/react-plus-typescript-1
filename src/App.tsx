@@ -1,79 +1,88 @@
-import userService, { IUser } from "./services/userService";
-import useUsers from "./hooks/useUsers";
+import useHook from "./hooks/useHook";
+import apiClient from "./practiceEffect/http-client";
+import { UsersProps } from "./practiceEffect/userService";
 
 function App() {
-	const { users, error, loading, setError, setUsers } = useUsers();
-
-	const handleDelete = (user: IUser) => {
-		const originalUser = [...users];
-		setUsers(users.filter((u) => u.id !== user.id));
-		userService.delete(user.id).catch((err) => {
-			setError(err.message);
-			setUsers(originalUser);
+	const { users, errors, loading, setErrors, setLoading, setUsers } = useHook();
+	const handelDelete = (id: number) => {
+		setErrors("");
+		const orignal = [...users];
+		setUsers(users.filter((user) => user.id !== id));
+		apiClient.delete("/users/" + id).catch((err) => {
+			setErrors(err.message);
+			setUsers(orignal);
 		});
 	};
 
-	const handleAdd = () => {
-		const originalUsers = [...users];
-		const newUser = {
-			id: 0,
-			name: "New User",
-		};
+	const handelCreate = () => {
+		setErrors("");
+		setLoading(true);
+		const original = [...users];
+		const newUser = { id: 0, name: "abhi singh" };
 		setUsers([...users, newUser]);
-		userService
-			.create(newUser)
+		apiClient
+			.post("/users", newUser)
 			.then(({ data: savedUser }) => {
-				console.log(savedUser);
+				setLoading(false);
 				setUsers([...users, savedUser]);
 			})
-			.catch((err) => {
-				setError(err.message);
-				setUsers(originalUsers);
+			.catch((err: Error) => {
+				setErrors(err.message);
+				setUsers(original);
+				setLoading(false);
 			});
 	};
 
-	const handleUpdate = (user: IUser) => {
-		const originalUsers = [...users];
-		const updatedUser = { ...user, name: user.name + "!" };
-		setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
-		userService.update(updatedUser).catch((err) => {
-			setError(err.message);
-			setUsers(originalUsers);
-		});
+	const handelUpdate = (userPayload: UsersProps) => {
+		const orignal = [...users];
+		setLoading(true);
+		setErrors("");
+		const updatedUser = { ...userPayload, name: userPayload.name + "!" };
+		setUsers(
+			users.map((item) => (item.id === userPayload.id ? updatedUser : item))
+		);
+		apiClient
+			.patch("/users/" + updatedUser.id, updatedUser)
+			.then(() => {
+				setLoading(false);
+			})
+			.catch((err) => {
+				setErrors(err.message);
+				setLoading(false);
+				setUsers(orignal);
+			});
 	};
-
 	return (
 		<div>
-			{error && <div className="text-danger">{error}</div>}
-			<button onClick={handleAdd} className="btn btn-primary">
-				Add User
-			</button>
+			{errors && <div className="alert alert-danger">{errors}</div>}
 			<ul className="list-group">
-				{users.map((user) => (
+				{users?.map((user: UsersProps) => (
 					<li
-						className="list-group-item d-flex justify-content-between"
 						key={user.id}
+						className="list-group-item d-flex justify-content-between"
 					>
 						{user.name}
 						<div>
 							<button
-								onClick={() => handleUpdate(user)}
-								className="btn btn-warning mx-2"
-							>
-								Update
-							</button>
-							<button
-								onClick={() => handleDelete(user)}
-								className="btn btn-danger"
+								onClick={() => handelDelete(user.id)}
+								className="btn btn-primary"
 							>
 								Delete
+							</button>
+							<button onClick={handelCreate} className="btn btn-primary mx-2">
+								ADD
+							</button>
+							<button
+								onClick={() => handelUpdate(user)}
+								className="btn btn-primary"
+							>
+								Update
 							</button>
 						</div>
 					</li>
 				))}
 			</ul>
-
-			{loading && <div className="spinner-border"></div>}
+			{loading && <div className="spinner-border" role="status"></div>}
 		</div>
 	);
 }
